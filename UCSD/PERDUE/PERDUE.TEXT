@@ -1,0 +1,45 @@
+{*****************************************
+ *                                       *
+ *  potenze di 2 in precisione multipla  *
+ *                                       *
+ *****************************************}
+program perdue(input,output);
+const n=9; { numero massimo di cifre-1 }
+      l2=0.30103; { logaritmo in base 10 di 2 }
+      { p*0.30103+1=numero di cifre del numero 2^p }
+var cifra:array[0..n] of 0..9; { vettore contenete le cifre }
+    p,l,c:integer; { contatore potenza, limite, cifra corrente }
+    r:0..1; { riporto }
+    i:0..n; { indice per il vettore }
+begin
+   repeat { ripeti... }
+      page(output); { pulisce lo schermo }
+      write('Potenza (max ',trunc((n+1)/l2),') ->'); { chiede quale potenza calcolare }
+      readln(l) { legge la risposta }
+   until l<=trunc((n+1)/l2); { ...fino a che ne ottiene una valida }
+   cifra[0]:=1; { 2^0=1 cifra meno significativa }
+   for i:=1 to n { inizializza le rimanenti cifre }
+   do cifra[i]:=0; { tutte a zero }
+   for p:=1 to l { ciclo fino alla potenza richiesta }
+   do begin
+         r:=0; { inizializza riporto }
+         for i:=0 to trunc(p*l2) { moltiplica le cife significative per due }
+         do begin
+               c:=cifra[i]*2+r; { raddoppia e aggiunge riporto }
+               if c>9 { se e' in doppia cifra... }
+               then begin { ...allora... }
+                       cifra[i]:=c-10; { riportala nei limiti }
+                       r:=1 { segnala che c'e' riporto }
+                    end
+               else begin { ...altrimenti... }
+                       cifra[i]:=c; { e' gia nei limiti }
+                       r:=0 { non c'e' riporto }
+                    end
+            end
+      end;
+   writeln;
+   write('2^',l,'='); { stampa il risultato }
+   for i:=trunc(l*l2) downto 0 { solo le cifre significative }
+   do write(cifra[i]);
+   writeln
+end.
