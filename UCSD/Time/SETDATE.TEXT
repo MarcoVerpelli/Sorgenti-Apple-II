@@ -1,0 +1,122 @@
+program setdate(output);
+const boot=4; {boot unit #}
+type byte=0..255;
+     drec=packed record {date on disk & memory}
+                    mt:1..12; dt:1..31; yy:0..99
+                 end;
+     trec=packed record {date & time form NSC}
+                    yy:byte; mt:byte; dt:byte; dy:byte;
+                    hh:byte; mm:byte; ss:byte; cc:byte
+                 end;
+var blk:array[0..255] of drec; {1 block buffer}
+    dskdte,clkdte:drec;
+    ts:trec;
+    dynme:array[1..7] of string;
+    mtnme:array[1..12] of string;
+
+procedure init; {set days & months names}
+begin
+   dynme[1]:='Sun'; dynme[2]:='Mon'; dynme[3]:='Tues'; dynme[4]:='Wednes';
+   dynme[5]:='Thurs'; dynme[6]:='Fri'; dynme[7]:='Satur';
+   mtnme[1]:='Jan'; mtnme[2]:='Feb'; mtnme[3]:='Mar'; mtnme[4]:='Apr';
+   mtnme[5]:='May'; mtnme[6]:='Jun'; mtnme[7]:='Jul'; mtnme[8]:='Aug';
+   mtnme[9]:='Sep'; mtnme[10]:='Oct'; mtnme[11]:='Nov'; mtnme[12]:='Dec'
+end;
+
+procedure timestamp(var ts:trec);external; {read NSC}
+
+procedure chkioerr; {we need this? if block #2 is bad pascal won't boot}
+var err:integer;
+begin
+   err:=ioresult;
+   if err<>0
+   then begin
+           write('I/O error: ',err);
+           halt
+        end
+end;
+   
+procedure getdskdte(var dskdte:drec); {read date form disk}
+begin
+   unitread(boot,blk,512,2);
+   chkioerr;
+   dskdte:=blk[10]
+end;
+
+procedure setdskdte(dskdte:drec); {write date to disk}
+begin
+   blk[10]:=dskdte;
+   unitwrite(boot,blk,512,2);
+   chkioerr
+end;
+
+procedure upddte(clkdte:drec); {update disk & memory date}
+type varrec=packed array[0..0] of byte;
+var trix:record
+            case boolean of
+             false:(address:integer);
+             true:(pointer:^varrec)
+            end;
+
+  function peek(addr:integer):byte; {from Pascal manual}
+  begin
+     trix.address:=addr;
+     peek:=trix.pointer^[0]
+  end;
+  
+  procedure poke(addr:integer; val:drec); {custom version}
+  var trix:record
+              case boolean of
+               false:(address:integer);
+               true:(pointer:^drec)
+              end;
+  begin
+     trix.address:=addr;
+     trix.pointer^:=val
+  end;
+  
+  function is128k:boolean; {is running a 128k interpreter?}
+  begin
+     is128k:=odd(peek(-16606) div 64) {flavor $BF22 bit #6 = 1 if 128k}
+  end;
+  
+begin
+   setdskdte(clkdte);
+   case peek(-16607) of {version $BF21}
+    2:poke(-21992,clkdte); {$AA18 1.1 only 64k}
+    3,4:if is128k
+        then poke(-18342,clkdte) {$B85A 1.2 and 1.3 128k}
+        else poke(-21252,clkdte) {$ACFC 1.2 and 1.3 64k}
+  end
+end;
+
+function b2i(val:byte):integer; {2 BCD digits to integer}
+begin
+   b2i:=10*(val div 16)+val mod 16
+end;
+
+procedure getclkdte(var clkdte:drec); {clock date BCD->integer}
+begin
+   clkdte.mt:=b2i(ts.mt);
+   clkdte.dt:=b2i(ts.dt);
+   clkdte.yy:=b2i(ts.yy)
+end;
+
+procedure wrttime(ts:trec); {display date & time}
+begin
+   writeln;
+   with ts
+   do write(dynme[b2i(dy)],'day ',b2i(dt),'-',mtnme[b2i(mt)],'-',b2i(yy),' ',
+            hh div 16,hh mod 16,':',mm div 16,mm mod 16,':',
+            ss div 16,ss mod 16,'.',cc div 16,cc mod 16)
+end;
+
+begin
+   init;
+   getdskdte(dskdte); {read date from disk}
+   timestamp(ts); {read date from NSC}
+   wrttime(ts); {display date & time}
+   getclkdte(clkdte); {convert NSC date}
+   if dskdte<>clkdte {if disk date <> clock date}
+   then upddte(clkdte); {then update}
+end.

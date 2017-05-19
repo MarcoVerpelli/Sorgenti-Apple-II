@@ -1,0 +1,69 @@
+         .MACRO POP ;from Pascal manual
+         PLA
+         STA %1
+         PLA
+         STA %1+1
+         .ENDM
+
+         .MACRO PUSH ;from Pascal manual
+         LDA %1+1
+         PHA
+         LDA %1
+         PHA
+         .ENDM
+
+         .TITLE "NSC - TIMESTAMP"
+
+RETURN   .EQU 00 ;return address
+TS       .EQU 02 ;address of passed parameter
+WRITENSC .EQU 0C300 ;assume NSC in slot #3
+READNSC  .EQU WRITENSC+4
+CLRROM   .EQU 0CFFF
+
+         .PROC TIMESTAMP,1
+
+         POP RETURN
+         POP TS
+
+         PHP
+         SEI
+         LDA CLRROM
+         PHA
+         STA WRITENSC
+         LDA READNSC
+         LDX #7
+WRITEPAT LDA PATTERN,X ;send activation pattern to NSC
+         SEC
+         ROR A
+$1       PHA
+         LDA #0
+         ROL A
+         TAY
+         LDA WRITENSC,Y
+         PLA
+         LSR A
+         BNE $1
+         DEX
+         BPL WRITEPAT
+         LDY #7
+READCLK  LDX #7 ;read NSC register
+$2       PHA
+         LDA READNSC
+         ROR A
+         PLA
+         ROR A
+         DEX
+         BPL $2
+         STA @TS,Y ;put BCD values from clock in the passed parameter
+         DEY
+         BPL READCLK
+         PLA
+         BMI $3
+         STA CLRROM
+$3       PLP
+         PUSH RETURN
+         RTS
+
+PATTERN  .BYTE   05C,0A3,03A,0C5,05C,0A3,03A,0C5
+
+         .END
