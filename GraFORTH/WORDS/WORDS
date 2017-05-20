@@ -1,0 +1,186 @@
+( w1,w2 -- w1,w2,w1,w2 )
+: 2DUP
+  OVER OVER ;
+
+( w1,w2 -- )
+: 2DROP
+  DROP DROP ;
+
+( x n -- x^n (n deve essere >= 0) )
+: ^
+  SWAP PUSH 1
+  BEGIN
+     SWAP 1 -
+     DUP 0 >=
+  WHILE
+     SWAP PULL *
+  REPEAT
+  DROP ;
+
+( a,l -- traccia spirale di angolo a e lato l incrementato di 3 ogni volta )
+: SQUIRAL
+  DUP 150 <= IF
+    2DUP MOVE TURN 3 + SQUIRAL ELSE
+    2DROP THEN ;
+
+( chiama squiral dopo aver inizializzato la 'tarta' )
+: SQ
+  TURTLE SQUIRAL ;
+
+( l,n -- traccia il poligono regolare di n lati lunghi l )
+: POLI
+  ( n deve essere un divisore intero di 360 )
+  DUP 360 OVER / * 360 =
+  IF 360 OVER / SWAP 0
+    DO
+      SWAP DUP MOVE
+      SWAP DUP TURN
+    LOOP THEN
+  2DROP ;
+
+( w1 -- w1,w1 (se w1<>0) )
+: ?DUP
+  DUP 0 <> IF
+    DUP THEN ;
+
+( a,b -- mcd(a,b) )
+: MCD
+  BEGIN
+     SWAP OVER MOD ?DUP 0 =
+  UNTIL ;
+
+( a,b -- mcd(a,b) (ricorsivo) )
+: MCDR
+  ?DUP 0 <> IF
+    SWAP OVER MOD MCDR THEN ;
+
+( n -- n! (ricorsivo) )
+: FATT
+  ?DUP IF
+    DUP 1 - FATT * ELSE
+    1 THEN ;
+
+( n -- n-esimo numero di Fibonacci (ricorsivo) )
+: FIBO
+  DUP 2 > IF
+    1 - DUP 1 - FIBO SWAP FIBO + ELSE
+    DROP 1 THEN ;
+
+( shell dos 3.3 )
+: SHELL
+  PRINT " Dos shell (type CR to exit) " CR
+  BEGIN
+     PRINT " > " ( prompt )
+     PAD READLN
+     PAD PEEK
+     141 <> ( battuto solo CR ? )
+  WHILE
+     CR 132 PUTC ( nuova linea, ctrl-d )
+     PAD WRITELN CR ( passa comando al dos )
+  REPEAT ;
+
+( l -- traccia il quadrato di lato l )
+: SQUARE
+  4 0
+  DO
+    DUP MOVE 90 TURN
+  LOOP ;
+
+( traccia una parte del tutto )
+: LATO
+  SQUARE
+  -45 TURN
+  SQUARE
+  DUP MOVE
+  45 TURN
+  SQUARE ;
+
+( l -- traccia l'ipercubo di lato l )
+: IPER
+  6 0
+  DO
+    LATO 45 TURN
+  LOOP
+  DROP ;
+
+( lato della curva )
+
+VARIABLE SIDE
+
+( n -- traccia la curva di Koch di livello n (ricorsivo) )
+: KOCHR
+  DUP 0 = IF
+    SIDE MOVE ELSE
+    DUP 1 - KOCHR
+    -60 TURN KOCHR
+    120 TURN KOCHR
+    -60 TURN KOCHR
+    DROP THEN ;
+
+( n -- pulisce lo schermo e traccia la curva di Koch di livello n )
+: KOCH
+  ERASE 0 96 MOVETO 90 TURNTO
+  DUP CHS 5 + 3 SWAP ^ -> SIDE
+  KOCHR DROP ;
+
+( -- compila il sorgente presente in editor )
+: C
+  46749 PEEKW 1 + MEMRD ;
+
+( x y s n -- disegna il 'buco' al centro del tappeto )
+: HOLE
+  DROP 3 / PUSH
+  OVER I + OVER I + POSN
+  OVER I 2 * + OVER PULL 2 * + EMPTY
+  2DROP ;
+
+( x y s n -- disegna il tappeto di Sierpinski di livello n (ricorsivo) )
+: CARPETR
+  DUP 1 = IF
+    HOLE ELSE
+    1 - OVER 3 / PUSH
+    4 PICK 4 PICK I + I 4 PICK
+    4 PICK 4 PICK I + I 4 PICK
+    4 PICK I + 4 PICK I 4 PICK
+    4 PICK I + 4 PICK I 4 PICK
+    4 PICK 4 PICK I - I 4 PICK
+    4 PICK 4 PICK I - I 4 PICK
+    4 PICK I - 4 PICK I 4 PICK
+    4 PICK I - 4 PICK PULL 4 PICK
+    CARPETR CARPETR CARPETR CARPETR
+    CARPETR CARPETR CARPETR CARPETR
+    HOLE THEN ;
+
+( n -- pulisce lo schermo e disegna il tappeto di Sierpinski di livello n )
+: CARPET
+  ERASE 59 15 POSN 221 177 FILL
+  ?DUP 0 <> IF
+    PUSH 59 15 162 PULL CARPETR THEN ;
+
+ VARIABLE S
+ VARIABLE L
+ VARIABLE D
+
+ ( n -- traccia la curva di Peano di livello n (ricorsivo) )
+: PEANOR
+  DUP 0 = IF
+    S MOVE ELSE
+  DUP 1 - PEANOR
+   45 TURN L MOVE  45 TURN PEANOR
+  -45 TURN L MOVE -45 TURN PEANOR
+  -45 TURN L MOVE -45 TURN PEANOR
+  -45 TURN L MOVE -45 TURN PEANOR
+   45 TURN L MOVE  45 TURN PEANOR
+   45 TURN L MOVE  45 TURN PEANOR
+   45 TURN L MOVE  45 TURN PEANOR
+  -45 TURN L MOVE -45 TURN PEANOR
+  DROP THEN ;
+
+( n -- pulisce lo schermo e traccia 1/4 della curva di Peano )
+: PEANO
+  DUP 4 SWAP - 3 SWAP ^ 2 * -> S
+  S 5 / -> L
+  S L 2 * - -> S
+  L 1000 * 1414 / -> D
+  ERASE 59 96 MOVETO 90 TURNTO
+  D MOVE PEANOR D MOVE DROP ;
