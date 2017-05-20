@@ -1,0 +1,85 @@
+   10 VARIABLE RAMO ( dimensione del ramo )
+    5 VARIABLE FOGLIA ( dimensione della foglia )
+ 5000 STRING A ( stringa contenente l'albero attuale )
+ 5000 STRING B ( stringa contenente il prossimo albero )
+   20 STRING ZERO ( stringa per sostituire simbolo zero )
+   20 STRING UNO ( stringa per sostituire simbolo uno )
+   20 STRING LEFT ( stringa per sostituire simbolo parentesi aperta )
+   20 STRING RIGHT ( stringa per sostituire simbolo parentesi chiusa )
+
+: LEN ( n,s -- ritorna la lunghezza di s partendo da n ) 
+  DUP
+  BEGIN
+     DUP PEEK 141 <>
+  WHILE
+     1 +
+  REPEAT
+  SWAP - ;
+
+: DRAW_ZERO ( disegna il corrispondente del simbolo zero )
+  RAMO 2 * 3 / MOVE
+    30 TURN FOGLIA MOVE
+   -60 TURN FOGLIA MOVE
+  -120 TURN FOGLIA MOVE
+   -60 TURN FOGLIA MOVE ;
+
+: DRAW_UNO ( disegna il corrispondente del simbolo uno )
+  RAMO MOVE ;
+
+: DRAW_LEFT ( disegna il corrispondente del simbolo parentesi aperta )
+  PUSH
+  TURTLE.X 128 / TURTLE.Y 128 / TURTLE.ANG
+  PULL
+  DUP TURN CHS -45 ;
+
+: DRAW_RIGHT ( disegna il corrispondente del simbolo parentesi chiusa )
+  DROP
+  PUSH
+  TURNTO MOVETO
+  PULL ;
+
+: DRAW_PLANT ( disegna la pianta contenuta in a )
+  TURTLE 128 191 MOVETO
+  -45
+  0 A PEEKW 2 DO
+                I A PEEK 176 = IF DRAW_ZERO ELSE
+                I A PEEK 177 = IF DRAW_UNO ELSE
+                I A PEEK 219 = IF DRAW_LEFT ELSE
+                I A PEEK 221 = IF DRAW_RIGHT THEN
+                THEN THEN THEN
+              LOOP
+  DROP ;
+
+: DO_ZERO ( sostituisce simbolo zero )
+  1 ZERO 0 B PEEKW B 0 ZERO PEEK MOVMEM
+  0 B PEEKW 0 ZERO PEEK + 0 B POKEW ;
+
+: DO_UNO ( sostituisce  simbolo uno )
+  1 UNO 0 B PEEKW B 0 UNO PEEK MOVMEM
+  0 B PEEKW 0 UNO PEEK + 0 B POKEW ;
+
+: DO_LEFT ( sostituisce simbolo parentesi aperta )
+  1 LEFT 0 B PEEKW B 0 LEFT PEEK MOVMEM
+  0 B PEEKW 0 LEFT PEEK + 0 B POKEW ;
+
+: DO_RIGHT ( sostituisce simbolo parentesi aperta )
+  1 RIGHT 0 B PEEKW B 0 RIGHT PEEK MOVMEM
+  0 B PEEKW 0 RIGHT PEEK + 0 B POKEW ;
+
+: DO_PLANT ( crea nuova pianta in b partendo da a )
+  2 0 B POKEW
+  0 A PEEKW 2 DO
+                I A PEEK 176 = IF DO_ZERO ELSE
+                I A PEEK 177 = IF DO_UNO ELSE
+                I A PEEK 219 = IF DO_LEFT ELSE
+                I A PEEK 221 = IF DO_RIGHT THEN
+                THEN THEN THEN
+              LOOP
+  0 B 0 A 0 B PEEKW MOVMEM ;
+
+: PLANT ( legge input )
+  PRINT " 0-> " 1 ZERO READLN 1 ZERO LEN 0 ZERO POKE
+  PRINT " 1-> " 1 UNO READLN 1 UNO LEN 0 UNO POKE
+  PRINT " [-> " 1 LEFT READLN 1 LEFT LEN 0 LEFT POKE
+  PRINT " ]-> " 1 RIGHT READLN 1 RIGHT LEN 0 RIGHT POKE
+ PRINT "  -> " 2 A READLN 0 A LEN 0 A POKEW ;
