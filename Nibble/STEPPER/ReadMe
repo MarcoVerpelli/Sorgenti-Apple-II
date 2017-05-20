@@ -1,4 +1,4 @@
-Una interessante utilty che permette l'esecuzione passo passo del codice 65C02
+Una interessante utilty che permette l'esecuzione passo passo del codice 6502
 visualizzando i registri ed i flags del processore.
 
 L'autore originale non ha previsto alcune istruzioni presenti solo nel 65C02,
