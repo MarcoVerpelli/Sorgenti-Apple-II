@@ -1,0 +1,67 @@
+( w1,w2,w3 -- w2,w3,w1 )
+: ROT
+  PUSH SWAP PULL SWAP ;
+
+( x -- int(sqr(x)) )
+: INTSQR
+  0 SWAP
+  BEGIN
+     SWAP 1 +
+     DUP DUP *
+     ROT SWAP
+     OVER SWAP <
+  UNTIL
+  SWAP 1 - ;
+
+( x -- round(sqr(x)) )
+: SQR
+  INTSQR
+  DUP DUP *
+  ROT SWAP MOD
+  OVER SWAP < + ;
+
+( dimensione dell'array )
+
+10000 VARIABLE SIZE
+
+( array contenente il crivello (solo i dispari) )
+
+10000 STRING FLAGS ( SIZE STRING FLAGS sembra non funzionare )
+
+( stampa i numeri rimasti nel crivello )
+: STAMPA
+ 2 . CR
+  SIZE 0
+  DO
+    I FLAGS PEEK IF
+      I 2 * 3 + . CR THEN
+  LOOP ;
+
+( n -- elimina dal crivello i multipli di n )
+: ELIM
+  DUP 2 * 3 + SWAP
+  BEGIN
+     OVER +
+     DUP SIZE <
+  WHILE
+     0 OVER
+     FLAGS POKE
+  REPEAT
+  DROP DROP ;
+
+( inizializza il crivello riempendolo di '1' )
+: INIT
+  SIZE 0
+  DO
+    1 I FLAGS POKE
+  LOOP ;
+
+( stampa i numeri primi fino a 2*SIZE+3 )
+: PRIMI
+  INIT
+  SIZE SQR 2 / 0
+  DO
+    I FLAGS PEEK IF
+      I ELIM THEN
+  LOOP
+  STAMPA ;
