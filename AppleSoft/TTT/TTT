@@ -1,0 +1,67 @@
+ 100  DEF  FN BT(X) =  PEEK (49249) > 127
+ 110  DEF  FN PX(X) =  INT ( PDL (0) / 255 * 39)
+ 120  DEF  FN PY(X) =  INT ( PDL (1) / 255 * 23)
+ 130 T = 0: REM Mettere a 1 per attivare test
+ 140  DIM L$(600),T%(9),F%(9),N%(9),H%(9),V%(9),AD%(23)
+ 150  DEF  FN OZ(X) = (T%(1) = X AND T%(2) = X AND T%(3) = X) OR (T%(4) = X AND T%(5) = X AND T%(6) = X) OR (T%(7) = X AND T%(8) = X AND T%(9) = X)
+ 160  DEF  FN VT(X) = (T%(1) = X AND T%(4) = X AND T%(7) = X) OR (T%(2) = X AND T%(5) = X AND T%(8) = X) OR (T%(3) = X AND T%(6) = X AND T%(9) = X)
+ 170  DEF  FN OB(X) = (T%(1) = X AND T%(5) = X AND T%(9) = X) OR (T%(3) = X AND T%(5) = X AND T%(7) = X)
+ 180  DEF  FN W(X) =  FN OZ(X) OR  FN VT(X) OR  FN OB(X)
+ 190 D$ =  CHR$ (4):H$ =  CHR$ (8):J$ =  CHR$ (10):K$ =  CHR$ (11):M$ =  CHR$ (13):Q$ =  CHR$ (17):MT$ =  CHR$ (15) +  CHR$ (27):NT$ =  CHR$ (14) +  CHR$ (24)
+ 200  PRINT D$"PR#3"M$Q$: FOR I = 1 TO 9: READ H%(I),V%(I): NEXT : FOR I = 0 TO 23: READ AD%(I): NEXT : DATA 16,5,20,5,24,5,16,9,20,9,24,9,16,13,20,13,24,13
+ 210  DATA 1024,1152,1280,1408,1536,1664,1792,1920,1064,1192,1320,1448,1576,1704,1832,1960,1104,1232,1360,1488,1616,1744,1872,2000
+ 220 F$ = "LOST.GAMES":CR = 66:CL = 67:VX =  FN PX(0):VY =  FN PY(0):VB =  FN BT(0):AD = AD%(VY) + VX
+ 230  PRINT D$"OPEN"F$: PRINT D$"READ"F$: INPUT L: FOR I = 1 TO L: INPUT L$(I): NEXT : PRINT D$"CLOSE"
+ 240  PRINT D$"FRE": GOSUB 510:I$ = "Nuova partita":P$ = "Chi inizia ?": GOSUB 690: GOSUB 710:CH =  PEEK (AD)
+ 241  PRINT D$"FRE"
+ 250  POKE AD,CR: GOSUB 540: ON Y <  > 21 GOTO 250:G$ = "A": ON X >  = 11 AND X <  = 15 GOTO 260:G$ = "H": ON X >  = 24 AND X <  = 28 GOTO 260: GOTO 250
+ 260  VTAB 16: PRINT K$: VTAB 21: HTAB 17: PRINT "_________": HTAB 16: PRINT MT$"Z"NT$"Abbandona"MT$"_": HTAB 17: PRINT "LLLLLLLLL"NT$: FOR I = 1 TO 9:T%(I) = 0: NEXT :J = 1: GOSUB 510:CH =  PEEK (AD)
+ 270  IF G$ = "H" THEN 300
+ 280  GOSUB 500
+ 290 P$ = "AA" + J$ + H$ + H$ + "AA": GOSUB 530:T%(M) = 1:P$ = "Ho vinto": ON  FN W(1) GOTO 560:P$ = "E' patta": ON J = 9 GOTO 560:G$ = G$ +  STR$ (M):J = J + 1
+ 300  POKE AD,CR: GOSUB 540:M = 1: ON X >  = 14 AND X <  = 17 GOTO 310:M = 2: ON X >  = 18 AND X <  = 21 GOTO 310:M = 3: ON X >  = 22 AND X <  = 25 GOTO 310: GOTO 300
+ 310  ON Y >  = 3 AND Y <  = 6 GOTO 320:M = M + 3: ON Y >  = 7 AND Y <  = 10 GOTO 320:M = M + 3: ON Y >  = 11 AND Y <  = 14 GOTO 320: ON X >  = 16 AND X <  = 24 AND Y = 21 GOTO 420: GOTO 300
+ 320  IF T%(M) THEN 300
+ 330 P$ = "@@" + J$ + H$ + H$ + "@@": GOSUB 530:T%(M) = 2:P$ = "Hai vinto": ON  FN W(2) GOTO 490:P$ = "E' patta": ON J = 9 GOTO 560:G$ = G$ +  STR$ (M):J = J + 1
+ 340 Q = 1: GOSUB 580: ON F GOTO 370:Q = 2: GOSUB 580: FOR I = 1 TO 9:N%(I) = 0: NEXT :N = 0: FOR I = 1 TO L: ON  LEFT$ (L$(I),J) = G$ GOSUB 430: NEXT : ON T GOSUB 720
+ 350  ON  NOT (N OR F) GOTO 360: ON  NOT N AND F GOTO 370: ON N AND  NOT F GOTO 410: ON N AND F GOTO 380: STOP : REM Per sicurezza !
+ 360  GOSUB 500: ON T%(M) <  > 0 GOTO 360: GOTO 290
+ 370  GOSUB 500: ON F%(M) GOTO 290: GOTO 370
+ 380 F = 0: FOR I = 1 TO 9: IF N%(I) <  > F%(I) THEN F%(I) = 1:F = 1: GOTO 400
+ 390 F%(I) = 0
+ 400  NEXT : ON F GOTO 370: GOTO 460
+ 410  GOSUB 500: ON N%(M) OR T%(M) <  > 0 GOTO 410: GOTO 290
+ 420 P$ = "Hai abbandonato": GOTO 560
+ 430  IF J + 1 >  =  LEN (L$(I)) THEN N%( VAL ( MID$ (L$(I),J + 1,1))) = 1:N = 1
+ 440  RETURN 
+ 450  PRINT D$"OPEN"F$: PRINT D$"WRITE"F$: PRINT L: FOR I = 1 TO L: PRINT L$(I): NEXT : PRINT D$"CLOSE": END 
+ 460 P$ = "Abbandono":J = J - 1:G$ =  LEFT$ (G$,J): FOR I = 1 TO L
+ 470  IF G$ =  LEFT$ (L$(I),J) THEN  FOR K = I TO L:L$(K) = L$(K + 1): NEXT :L = L - 1: GOTO 470
+ 480  NEXT 
+ 490 L = L + 1:L$(L) = G$: GOTO 560
+ 500 M =  INT ( RND (1) * 9) + 1: RETURN 
+ 510  PRINT  CHR$ (25): VTAB 4:N = 3: FOR Q = 1 TO 2: GOSUB 520: HTAB 15: PRINT "____"MT$"T"NT$"___"MT$"T"NT$"___": NEXT :N = 4: GOSUB 520: RETURN 
+ 520  FOR I = 1 TO N: HTAB 15: PRINT "    "MT$"_"NT$"   "MT$"_"NT$"    ": NEXT : RETURN 
+ 530  POKE AD,CH: VTAB V%(M): HTAB H%(M): PRINT MT$P$NT$:CH =  PEEK (AD): POKE AD,CL: RETURN 
+ 540 B =  FN BT(0):X =  FN PX(0):Y =  FN PY(0): ON X = VX AND Y = VY AND B = VB GOTO 540: POKE AD,CH:AD = AD%(Y) + X:CH =  PEEK (AD): POKE AD,CR:VX = X:VY = Y:VB = B: ON  NOT B GOTO 540: POKE AD,CL
+ 550  ON  FN BT(0) GOTO 550: RETURN 
+ 560  POKE AD,CH:I$ = "Fine partita": GOSUB 690: GOSUB 700:CH =  PEEK (AD)
+ 570  POKE AD,66: GOSUB 540: ON Y <  > 21 GOTO 570: ON X >  = 13 AND X <  = 14 GOTO 240: ON X >  = 23 AND X <  = 26 GOTO 450: GOTO 570
+ 580  FOR I = 1 TO 9:F%(I) = 0: NEXT :F = 0
+ 590  IF T%(1) = 0 AND ((T%(2) = Q AND T%(3) = Q) OR (T%(4) = Q AND T%(7) = Q) OR (T%(5) = Q AND T%(9) = Q)) THEN F = 1:F%(1) = 1
+ 600  IF T%(2) = 0 AND ((T%(1) = Q AND T%(3) = Q) OR (T%(5) = Q AND T%(8) = Q)) THEN F = 1:F%(2) = 1
+ 610  IF T%(3) = 0 AND ((T%(1) = Q AND T%(2) = Q) OR (T%(6) = Q AND T%(9) = Q) OR (T%(5) = Q AND T%(7) = Q)) THEN F = 1:F%(3) = 1
+ 620  IF T%(4) = 0 AND ((T%(5) = Q AND T%(6) = Q) OR (T%(1) = Q AND T%(7) = Q)) THEN F = 1:F%(4) = 1
+ 630  IF T%(5) = 0 AND ((T%(4) = Q AND T%(6) = Q) OR (T%(2) = Q AND T%(8) = Q) OR (T%(1) = Q AND T%(9) = Q) OR (T%(3) = Q AND T%(7) = Q)) THEN F = 1:F%(5) = 1
+ 640  IF T%(6) = 0 AND ((T%(4) = Q AND T%(5) = Q) OR (T%(3) = Q AND T%(9) = Q)) THEN F = 1:F%(6) = 1
+ 650  IF T%(7) = 0 AND ((T%(8) = Q AND T%(9) = Q) OR (T%(1) = Q AND T%(4) = Q) OR (T%(3) = Q AND T%(5) = Q)) THEN F = 1:F%(7) = 1
+ 660  IF T%(8) = 0 AND ((T%(7) = Q AND T%(9) = Q) OR (T%(2) = Q AND T%(5) = Q)) THEN F = 1:F%(8) = 1
+ 670  IF T%(9) = 0 AND ((T%(7) = Q AND T%(8) = Q) OR (T%(3) = Q AND T%(6) = Q) OR (T%(1) = Q AND T%(5) = Q)) THEN F = 1:F%(9) = 1
+ 680  RETURN 
+ 690  VTAB 17: HTAB 8: PRINT K$MT$"Z\\\\\\\\\\\\\\\\\\\\\\\\_";: HTAB 15: PRINT  CHR$ (24)I$MT$: FOR I = 1 TO 6: HTAB 8: PRINT "Z"NT$;: HTAB 33: PRINT MT$"_": NEXT : HTAB 8: PRINT "Z"NT$"________________________"MT$"_"NT$;: VTAB 19: HTAB 10: PRINT P$: RETURN 
+ 700  VTAB 21: HTAB 14: PRINT "__" SPC( 8)"____": HTAB 13: PRINT MT$"Z"NT$"Ok"MT$"_"NT$ SPC( 6)MT$"Z"NT$"Fine"MT$"_": HTAB 14: PRINT "LL"NT$ SPC( 8)MT$"LLLL"NT$: RETURN 
+ 710  VTAB 21: HTAB 12: PRINT "_____" SPC( 8)"_____": HTAB 11: PRINT MT$"Z"NT$"Apple"MT$"_"NT$ SPC( 6)MT$"Z"NT$"Umano"MT$"_": HTAB 12: PRINT "LLLLL"NT$ SPC( 8)MT$"LLLLL"NT$: RETURN 
+ 720  IF  NOT N THEN  RETURN 
+ 730 P$ = NT$ + "\/" + J$ + H$ + H$ + "/\": GOSUB 740: FOR I = 1 TO 1000: NEXT :P$ = NT$ + "  " + J$ + H$ + H$ + "  "
+ 740  FOR I = 1 TO 9: ON N%(I) GOSUB 750: NEXT : RETURN 
+ 750 M = I: GOSUB 530: RETURN 
