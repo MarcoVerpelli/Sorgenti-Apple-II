@@ -10,7 +10,7 @@ questo programma può usare il mouse solo se attivato in modo passivo (la versio
 riportata nemmeno l'attiva, occorre un joystick)
 
 Nel file LOST.GAMES il programma, guarda caso, tiene traccia delle partite perse.
-Consultando questo file non commette MAI due volte lo stesso errore. Una caratteristica
+Consultando questo file esso non commette MAI due volte lo stesso errore. Una caratteristica
 che trovo interessante è la routine che permette al programma di abbandonare il gioco
 quando si rende conto di trovarsi in un vicolo cieco.
 
