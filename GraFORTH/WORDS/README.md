@@ -5,3 +5,5 @@ Servono per arrivare a definire tra le altre:
 3) la curva di Peano
 
 ![Koch](https://github.com/MarcoVerpelli/Sorgenti-Apple-II/blob/master/GraFORTH/WORDS/Koch.png)
+
+![Carpet](https://github.com/MarcoVerpelli/Sorgenti-Apple-II/blob/master/GraFORTH/WORDS/Carpet.png)
