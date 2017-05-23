@@ -7,3 +7,5 @@ Servono per arrivare a definire tra le altre:
 ![Koch](https://github.com/MarcoVerpelli/Sorgenti-Apple-II/blob/master/GraFORTH/WORDS/Koch.png)
 
 ![Carpet](https://github.com/MarcoVerpelli/Sorgenti-Apple-II/blob/master/GraFORTH/WORDS/Carpet.png)
+
+![Peano](https://github.com/MarcoVerpelli/Sorgenti-Apple-II/blob/master/GraFORTH/WORDS/Peano.png)
