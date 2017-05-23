@@ -19,3 +19,7 @@ facendo vi avrei tolto il piacere di vedere il programma imparare.
 
 Si consiglia vivamente di compilare questo programma. Il compilatore dei Fratelli Bracchetto
 funziona benissimo.
+
+![TicTacToe 1](https://github.com/MarcoVerpelli/Sorgenti-Apple-II/blob/master/AppleSoft/TTT/TTT1.png)
+
+![TicTacToe 2](https://github.com/MarcoVerpelli/Sorgenti-Apple-II/blob/master/AppleSoft/TTT/TTT2.png)
