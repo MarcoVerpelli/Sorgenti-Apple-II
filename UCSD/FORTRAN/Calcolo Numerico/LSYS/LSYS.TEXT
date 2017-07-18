@@ -1,0 +1,139 @@
+C programma principale per l'esempio 4.8
+C Da Conte/de Boor "Elementary Numerical Analysis An Algorithmic Approach"
+C pag 182 riadattato per Apple Fortran
+      PROGRAM LSYS
+      REAL A(3,3),B(3),D(3),X(3)
+      INTEGER IPIVOT(3),IFLAG,I
+      DATA A / 0.24, 0.12, 0.15,
+     *         0.36, 0.16, 0.21,
+     *         0.12, 0.24, 0.25 /
+      DATA B / 0.84, 0.52, 0.64 /
+      CALL FACTOR( A, 3, D, IPIVOT, IFLAG )
+      IF (IFLAG .EQ. 0)                 STOP
+      CALL SUBST(A, IPIVOT, B, 3, X )
+      WRITE (*,100)(X(I),I=1,3)
+  100 FORMAT(F8.3)
+      STOP
+      END
+      
+C Da Conte/de Boor "Elementary Numerical Analysis An Algorithmic Approach"
+C pagg 165-166
+      SUBROUTINE FACTOR ( W, N, D, IPIVOT, IFLAG )
+      INTEGER IFLAG,IPIVOT(N),   I,ISTAR,J,K
+      REAL D(N),W(N,N),   AWIKOD,COLMAX,RATIO,ROWMAX,TEMP
+C******  I N P U T  ******
+C  W  ARRAY OF SIZE (N,N) CONTAINING THE MATRIX  A  OF ORDER  N  TO BE
+C     FACTORED.
+C  N  THE ORDER OF THE MATRIX
+C******  W O R K   A R E A  ******
+C  D  A REAL VECTOR OF LENGTH N, TO HOLD ROW SIZES
+C******  O U T P U T  ******
+C  W  ARRAY OF SIZE (N,N) CONTAINING THE LU FACTORIZATION OF  P*A  FOR
+C     SOME PERMUTATION MATRIX  P  SPECIFIED BY  IPIVOT .
+C  IPIVOT  INTEGER VECTOR OF LENGTH  N  INDICATING THAT ROW  IPIVOT(K)
+C     WAS USED TO ELIMINATE  X(K) , K=1,...,N .
+C  IFLAG   AN INTEGER,
+C       = 1, IF AN EVEN NUMBER OF INTERCHANGES WAS CARRIED OUT
+C       = -1, IF AN ODD NUMBER OF INTERCHANGES WAS CARRIED OUT,
+C       = 0, IF THE UPPER TRIANGULAR FACTOR HAS ONE OR MORE ZERO DIA-
+C            GONAL ENTRIES.
+C     THUS, DETERMINANT(A) = IFLAG*W(1,1)*...*W(N,N) .
+C     IF IFLAG .NE. 0, THEN THE LINEAR SYSTEM A*X = B CAN BE SOLVED FOR
+C      X  BY A
+C         CALL SUBST (W, IPIVOT, B, N, X )
+C******  M E T H O D ******
+C  THE PROGRAM FOLLOWS ALGORITHM 4.2, USING SCALED PARTIAL PIVOTING.
+C
+      IFLAG = 1
+C               INITIALIZE IPIVOT, D
+      DO 9 I=1,N
+         IPIVOT(I) = I
+         ROWMAX = 0.
+         DO 5 J=1,N
+    5       ROWMAX = AMAX1(ROWMAX,ABS(W(I,J)))
+         IF (ROWMAX .EQ. 0.) THEN
+            IFLAG = 0
+            ROWMAX = 1.
+         END IF
+    9    D(I) = ROWMAX
+      IF (N .LE. 1)                     RETURN
+C              FACTORIZATION
+      DO 20 K=1,N-1
+C                 DETERMINE PIVOT ROW, THE ROW  ISTAR .
+         COLMAX = ABS(W(K,K))/D(K)
+         ISTAR = K
+         DO 13 I=K+1,N
+            AWIKOD = ABS(W(I,K))/D(I)
+            IF (AWIKOD .GT. COLMAX) THEN
+               COLMAX = AWIKOD
+               ISTAR = I
+            END IF
+   13    CONTINUE
+         IF (COLMAX .EQ. 0.)  THEN
+            IFLAG = 0
+         ELSE
+            IF (ISTAR .GT. K)  THEN
+C                 MAKE  K  THE PIVOT ROW  BY INTERCHANGING IT WITH
+C                 THE CHOSEN ROW  ISTAR .
+               IFLAG = -IFLAG
+               I = IPIVOT(ISTAR)
+               IPIVOT(ISTAR) = IPIVOT(K)
+               IPIVOT(K) = I
+               TEMP = D(ISTAR)
+               D(ISTAR) = D(K)
+               D(K) = TEMP
+               DO 15 J=1,N
+                  TEMP = W(ISTAR,J)
+                  W(ISTAR,J) = W(K,J)
+   15             W(K,J) = TEMP
+            END IF
+C                 ELIMINATE  X(K)  FROM ROWS  K+1,...,N .
+C questa etichetta non e' mai usata!
+   16       DO 19 I=K+1,N
+               W(I,K) = W(I,K)/W(K,K)
+               RATIO = W(I,K)
+               DO 19 J=K+1,N
+                  W(I,J) = W(I,J) - RATIO*W(K,J)
+   19       CONTINUE
+         END IF
+   20 CONTINUE
+      IF (W(N,N) .EQ. 0.)   IFLAG = 0
+                                        RETURN
+      END
+      
+C Da Conte/de Boor "Elementary Numerical Analysis An Algorithmic Approach"
+C pag 164
+      SUBROUTINE SUBST ( W, IPIVOT, B, N, X )
+      INTEGER IPIVOT(N),   I,IP,J
+      REAL B(N),W(N,N),X(N),   SUM
+C******  I N P U T  ******
+C  W, IPIVOT, N  ARE AS ON OUTPUT FROM  F A C T O R , APPLIED TO THE
+C     MATRIX  A  OF ORDER  N .
+C  B  IS AN N-VECTOR, GIVING THE RIGHT SIDE OF THE SISTEM TO BE SOLVED.
+C******  O U T P U T  ******
+C  X  IS THE N-VECTOR SATISFYING  A*X  =  B.
+C******  M E T H O D ******
+C  ALGORITHM 4.4 IS USED, I.E., THE FACTORIZATION OF  A  CONTAINED IN
+C  W  AND  IPIVOT  (AS GENERATED IN  FACTOR ) IS USED TO SOLVE  A*X = B
+C
+      IF (N .LE. 1) THEN
+         X(1) = B(1)/W(1,1)
+                                        RETURN
+      END IF
+      IP = IPIVOT(1)
+      X(1) = B(IP)
+      DO 15 I=2,N
+         SUM = 0.
+         DO 14 J=1,I-1
+   14       SUM = W(I,J)*X(J) + SUM
+         IP = IPIVOT(I)
+   15    X(I) = B(IP) - SUM
+C
+      X(N) = X(N)/W(N,N)
+      DO 20 I=N-1,1,-1
+         SUM = 0.
+         DO 19 J=I+1,N
+   19       SUM = W(I,J)*X(J) + SUM
+   20    X(I) = (X(I) - SUM)/W(I,I)
+                                        RETURN
+      END
