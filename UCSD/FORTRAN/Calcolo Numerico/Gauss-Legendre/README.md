@@ -1,2 +1,2 @@
-Qusto algoritmo è talmente buono che pure con le ridotte capacità precisione
+Qusto algoritmo è talmente buono che pure con ridotte capacità di precisione
 genera ottimi risposte. Nello UCSD FORTRAN non esisto i DOUBLE PRECISION!
