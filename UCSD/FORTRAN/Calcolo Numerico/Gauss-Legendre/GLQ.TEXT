@@ -1,0 +1,30 @@
+C Da Conte/de Boor "Elementary Numerical Analysis An Algorithmic Approach"
+C pagg 326-327 riadattato per Apple Fortran
+C  PROGRAM FOR EXAMPLE 7.7. COMPOSITE FOUR-POINT GAUSS-LEGENDRE .
+      PROGRAM GLQ
+      INTEGER I,N
+      REAL A,B,H,HOVER2,P1,P2,POINT(2),S,S1,S2,WEIGHT(2),X
+      DATA POINT,WEIGHT / .33998 10436, .86113 63116,
+     *                    .65214 51549, .34785 48451 /
+      F(X) = SIN(X)**2/X
+      WRITE (*,600)
+  600 FORMAT('EXAMPLE 7.7  FOUR-POINT GAUSS-LEGENDRE'/)
+      A=1.
+      B=2.
+      N=4
+      IF (N .LT. 1)                      STOP
+      H = (B - A)/FLOAT(N)
+      HOVER2 = H/2.
+      P1= POINT(1)*HOVER2
+      P2= POINT(2)*HOVER2
+      S1 = 0.
+      S2 = 0.
+      DO 2 I=1,N
+         X = A + FLOAT(I)*H - HOVER2
+         S1 = S1 + F(-P1+X) + F(P1+X)
+    2    S2 = S2 + F(-P2+X) + F(P2+X)
+      S = HOVER2*(WEIGHT(1)*S1 + WEIGHT(2)*S2)
+      WRITE (*,602) A,B,N,S
+  602 FORMAT('INTEGRAL FROM A = ',1PE12.6,' TO B = ',E12.6,
+     *       ' FOR N = ',I1,' IS ',E12.6)
+      END
