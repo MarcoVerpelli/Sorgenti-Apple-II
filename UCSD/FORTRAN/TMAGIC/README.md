@@ -7,4 +7,4 @@ Da notare anche un fudge factor, attualmente un addendo, in stile Newton (anche 
 pochi bit = grandi errori decimali
 
 
-![TMAGIC](https://github.com/MarcoVerpelli/Sorgenti-Apple-II/blob/master/UCSD/FORTRAN/TMAGIC/PLANT/TMAGIC.png)
+![TMAGIC](https://github.com/MarcoVerpelli/Sorgenti-Apple-II/blob/master/UCSD/FORTRAN/TMAGIC/TMAGIC.png)
