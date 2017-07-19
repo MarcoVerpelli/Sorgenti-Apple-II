@@ -1,0 +1,182 @@
+(*******************************************
+ *                                         *
+ *    programma fuga da un labirinto       *
+ *                                         *
+ *    esce da un labirinto operando in     *
+ *    modo ricorsivo tipo la visita in     *
+ *    preorder di un albero                *
+ *                                         *
+ *    l'edit del labirinto e' su video     *
+ *    comandi possibili :                  *
+ *              le 4 frecce muovono        *
+ *              tab mette un muro          *
+ *              space toglie il muro,      *
+ *              l'ingresso o l'uscita      *
+ *              I segna l'ingresso         *
+ *              U segna l'uscita           *
+ *              esc da inizio alla fuga    *
+ *                                         *
+ *******************************************)
+program escape (input,output);
+const muro=true;
+      spazio=false;
+      chmuro=' '; (* Delete - 7F *)
+      chspazio=' ';
+      chingresso='I';
+      chuscita='U';
+var xi,yi,xu,yu,i,j,k,c:integer;
+    lab:packed array[0..36,0..16] of boolean;
+    ch,esc,bell:char;
+    giai,giau:boolean;
+procedure init;
+begin
+   for i:=0 to 36
+   do begin
+         lab[i,0]:=muro;
+         lab[i,16]:=muro
+      end;
+   for j:=1 to 15
+   do begin
+         lab[0,j]:=muro;
+         lab[36,j]:=muro
+      end;
+   for j:=1 to 15
+   do for i:=1 to 35
+      do lab[i,j]:=spazio;
+   giai:=false;
+   giau:=false;
+   esc:=chr(27);
+   bell:=chr(7);
+   xi:=1; yi:=1;
+   xu:=1; yu:=1;
+   k:=0
+end;
+procedure dislab;
+begin
+   gotoxy(5,20);
+   write('                                            ');
+   gotoxy(5,21);
+   write('          ');
+   gotoxy(0,0);
+   for j:=0 to 16
+   do begin
+         for i:=0 to 36
+         do if lab[i,j]=muro
+            then write(chmuro)
+            else write(chspazio);
+         writeln
+      end
+end;
+procedure istr;
+begin
+   gotoxy(40,3);write('Programma Fuga da un Labirinto');
+   gotoxy(40,5);write('usa le frecce per muovere ed i');
+   gotoxy(40,6);write('tasti <TAB> <SPACE> <ESC> <I> <U>');
+   gotoxy(40,7);write('per : mettere un muro , togliere');
+   gotoxy(40,8);write('un muro, ingresso o uscita, iniz-');
+   gotoxy(40,9);write('iare la fuga , segnare l''ingresso');
+   gotoxy(40,10);write('e l''uscita')
+end;
+procedure leggi;
+begin
+   i:=1;j:=1;
+   gotoxy(i,j);
+   read(keyboard,ch);
+   while ch <> esc
+   do begin
+         case ord(ch) of
+             8:if i=1
+               then write(bell)
+               else i:=i-1;
+            10:if j=15
+               then write(bell)
+               else j:=j+1;
+            11:if j=1
+               then write(bell)
+               else j:=j-1;
+            21:if i=35
+               then write(bell)
+               else i:=i+1;
+             9:begin
+                  write(chmuro);
+                  lab[i,j]:=muro;
+                  i:=i+1;
+                  if i>=35
+                  then i:=35
+               end;
+            32:begin
+                  write(chspazio);
+                  lab[i,j]:=spazio;
+                  if (i=xi) and (j=yi)
+                  then giai:=false;
+                  if (i=xu) and (j=yu)
+                  then giau:=false
+               end;
+        73,105:begin
+                  if giai
+                  then write(bell)
+                  else begin
+                          write(chingresso);
+                          xi:=i;yi:=j;
+                          giai:=true
+                       end
+               end;
+        85,117:begin
+                  if giau
+                  then write(bell)
+                  else begin
+                          write(chuscita);
+                          xu:=i;yu:=j;
+                          giau:=true
+                       end
+               end
+           end;
+         gotoxy(i,j);
+         read(keyboard,ch)
+      end
+end;
+procedure callfuga;
+  procedure fuga(x,y:integer);
+  begin
+     if (x=xu)and(y=yu)
+     then begin
+             gotoxy(xu,yu);
+             for c:=1 to 250
+             do ;
+             gotoxy(5,20);
+             writeln('ok,fuori in ',k,' passi');
+             exit(callfuga)
+          end;
+     if lab[x,y]=spazio
+     then begin
+             lab[x,y]:=muro;
+             gotoxy(x,y);
+             for c:=1 to 100
+             do ;
+             k:=k+1;
+             fuga(x,y-1);
+             fuga(x+1,y);
+             fuga(x-1,y);
+             fuga(x,y+1);
+             gotoxy(x,y);
+             for c:=1 to 100
+             do ;
+          end
+  end;
+begin
+   fuga(xi,yi);
+   gotoxy(5,20);
+   writeln('non esiste cammino tra l''ingresso e l''uscita')
+end;
+begin
+   page(output);
+   istr;
+   repeat
+     init;dislab;
+     leggi;
+     callfuga;
+     gotoxy(5,21);
+     write('ancora s/n');
+     read(keyboard,ch)
+   until ch in ['n','N']
+end.
