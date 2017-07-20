@@ -2,7 +2,7 @@
 * Of D'Gamma.
 * Coded for C64CrapDebunk.Wordpress.com
 
-* Merinl-ized, ProDOS-ized and (more) Apple-ized by MV
+* Merlin-ized, ProDOS-ized and (more) Apple-ized by MV
 *
 * Changed some labels because Merlin-8 max is 13 chrs
 * Made it a ProDOS system file
