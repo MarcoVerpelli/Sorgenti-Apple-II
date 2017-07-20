@@ -1,0 +1,82 @@
+program postfix(input,output);
+var ch:char;
+    st:string;
+procedure conv;forward;
+procedure error(n:integer);
+begin
+   writeln;
+   write('Error #',n);
+   exit(conv)
+end;
+procedure find;
+  function up(c:char):char;
+  begin
+     if c in ['a'..'z']
+     then c:=chr(ord(c)-ord(' '));
+     up:=c
+  end;
+begin
+   ch:=up(st[1]);
+   delete(st,1,1)
+end;
+procedure expression;
+var op:char;
+  procedure term;
+  var op:char;
+    procedure factor;
+    begin
+       if ch='('
+       then begin
+               find;
+               expression;
+               if ch<>')'
+               then error(1)
+            end
+       else if ch in ['A'..'Z']
+            then write(ch)
+            else error(2);
+       find
+    end;
+  begin
+     factor;
+     while (ch='*') or (ch='/')
+     do begin
+           op:=ch;
+           find;
+           factor;
+           write(op)
+        end
+  end;
+begin
+   term;
+   while (ch='+')or(ch='-')
+   do begin
+         op:=ch;
+         find;
+         term;
+         write(op)
+      end
+end;
+procedure readst;
+begin
+   write('>');
+   readln(st);
+   st:=concat(st,'.')
+end;
+procedure conv;
+begin
+   find;
+   write('=');
+   expression;
+   if ch<>'.'
+   then error(3)
+end;
+begin
+   readst;
+   while st[1]<>'.'
+   do begin
+         conv;
+         writeln;
+         readst
+      end 
+end.
