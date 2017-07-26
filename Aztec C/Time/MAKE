@@ -1,0 +1,4 @@
+as readnsc.a65
+cc time.c
+ln time.o readnsc.o -lc
+rm *.o
