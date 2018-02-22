@@ -12,8 +12,7 @@
       SUBROUTINE PMAGIC(A,N)
       INTEGER A(N,N)
       CHARACTER*6 FMTCHR
-      WRITE (FMTCHR,'(''('',I2,''I'',I1,'')'')')
-     cN,INT(ALOG10(REAL(N**2))+1E-6)+2
+      WRITE (FMTCHR,'(''('',I2,''I'',I1,'')'')') N,INT(ALOG10(N**2.0))+2
       WRITE (*,FMTCHR) ((A(I,J),J=1,N),I=1,N)
       RETURN
       END
