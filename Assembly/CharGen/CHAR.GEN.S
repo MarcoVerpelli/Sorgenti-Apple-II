@@ -1,6 +1,6 @@
 * CHAR.GEN
 * Generatore di caratteri in HGR
-* rodotto al mimimo preso da BIT (modificato)
+* riodotto al mimimo preso da BIT (modificato)
 *
 * Per attivarlo prima 'pokkare' in 6 e 7
 * l'indirizzo del set di caratteri poi PR#Astart
