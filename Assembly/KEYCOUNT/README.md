@@ -1,2 +1,2 @@
 Un contatore di tasti premuti.
-Inutile come può essere inutule un esercizio sugli interrupt
+Inutile come può essere inutile un esercizio sugli interrupt
