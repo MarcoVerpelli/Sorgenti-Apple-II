@@ -1,7 +1,7 @@
 Intelligenza Artificiale o Deficienza Naturale?
 
 Dopo aver letto l'articolo di Martin Gardner su MENACE macchina a scatole di fiammiferi
-per giocare a tris e su Hexapawn (Le Scienze numero 10 giugno 1969) ecco la mia sintesi:
+per giocare a tris e su Hexapawn (Le Scienze 10, giugno 1969) ecco la mia sintesi:
 un programma che gioca a tris imparando dai propri errori.
 
 Scritto molto tempo prima che riuscissi ad avere tra le mani il Mouse Toolkit della Apple
