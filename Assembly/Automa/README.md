@@ -4,4 +4,7 @@ Devo averlo fatto dopo aver letto l'articolo di A. K. Dewney (Le Scienze 203, lu
 di comprare e leggere NKS di Wolfram.
 
 ![Automa](https://github.com/MarcoVerpelli/Sorgenti-Apple-II/blob/master/Assembly/Automa/Automa.png)
+
+L'immagine originale dal citato articolo
+
 ![Originale](https://github.com/MarcoVerpelli/Sorgenti-Apple-II/blob/master/Assembly/Automa/Originale.png)
