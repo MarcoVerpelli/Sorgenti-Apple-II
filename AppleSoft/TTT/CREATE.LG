@@ -1,4 +1,5 @@
- ```
+
+```basic
  10  PRINT  CHR$ (4)"OPEN LOST.GAMES"
  20  PRINT  CHR$ (4)"WRITE LOST.GAMES"
  30  PRINT 1
