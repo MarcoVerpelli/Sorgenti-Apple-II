@@ -11,6 +11,6 @@ non ho il sorgente, il binario è presente sull'immagine disco
 
 Le figure prese dal libro citato
 
-![BifMap 2](https://github.com/MarcoVerpelli/Sorgenti-Apple-II/blob/master/AppleSoft/Chaos/ORIGINALE1.png)
+![BifMap 2](https://github.com/MarcoVerpelli/Sorgenti-Apple-II/blob/master/AppleSoft/Chaos/ORIGINALE2.png)
 
-![CoWeb 2](https://github.com/MarcoVerpelli/Sorgenti-Apple-II/blob/master/AppleSoft/Chaos/ORIGINALE2.png)
+![CoWeb 2](https://github.com/MarcoVerpelli/Sorgenti-Apple-II/blob/master/AppleSoft/Chaos/ORIGINALE1.png)
