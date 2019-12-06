@@ -1,6 +1,0 @@
- 5  PRINT  CHR$ (4)"-DUBLSTUF"
- 10  INPUT "Inizio,Fine->";XB,XA: IF XB < 0 OR XB > XA OR XA > 4 OR XA < XB GOTO 10
- 20 XM = 559:YM = 191:YB = 0:YA = 1: &  HGR : & F:SX = (XA - XB) / XM:SY = YM / (YA - YB):E = 1 / SY: FOR X = 0 TO XM:R = XB + X * SX:L = .5:V = L
- 30 L = R * L * (1 - L):V = R * V * (1 - V):V = R * V * (1 - V): ON  ABS (L - V) >  = E GOTO 30:K = V
- 40  ON V < YB OR V > YA GOTO 50: &  HPLOT X,YM -  INT ((V - YB) * SY)
- 50 V = R * V * (1 - V): ON  ABS (K - V) >  = E GOTO 40: NEXT : GET A$: & T: GOTO 10
